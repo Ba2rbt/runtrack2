@@ -1,16 +1,14 @@
 <?php
-// Variables pour les dimensions du rectangle (facilement modifiables)
+// Définir les dimensions du rectangle
 $largeur = 20;
 $hauteur = 10;
 
-echo "Rectangle de $largeur x $hauteur :\n\n";
-
-// Affichage du rectangle
+// Boucle pour chaque ligne
 for ($i = 0; $i < $hauteur; $i++) {
+    // Affiche chaque ligne du rectangle
     for ($j = 0; $j < $largeur; $j++) {
-        echo "$largeur";
-        echo "$hauteur";
+        echo "*";
     }
-    echo "\n";
+    echo "<br>"; // Saut de ligne après chaque ligne
 }
 ?>
