@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire GET et affichage des arguments</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Formulaire en méthode GET</h1>
+
+<form method="GET" action="">
+    <label for="prenom">Prénom :</label>
+    <input type="text" id="prenom" name="prenom"><br><br>
+
+    <label for="nom">Nom :</label>
+    <input type="text" id="nom" name="nom"><br><br>
+
+    <label for="age">Âge :</label>
+    <input type="text" id="age" name="age"><br><br>
+
+    <input type="submit" value="Envoyer">
+</form>
+
+<?php
+if (!empty($_GET)) {
+    echo "<h2>Arguments \$_GET reçus :</h2>";
+    echo "<table>";
+    echo "<tr><th>Argument</th><th>Valeur</th></tr>";
+    
+    foreach ($_GET as $cle => $valeur) {
+        // Sécuriser l'affichage contre les injections HTML
+        $cle_esc = htmlspecialchars($cle);
+        $valeur_esc = htmlspecialchars($valeur);
+        echo "<tr><td>$cle_esc</td><td>$valeur_esc</td></tr>";
+    }
+    
+    echo "</table>";
+}
+?>
+
+</body>
+</html>
