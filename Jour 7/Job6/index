@@ -1,0 +1,25 @@
+<?php
+
+function leetSpeak($str) {
+    // Tableau de correspondance pour la conversion en leet speak
+    $conversions = array(
+        'A' => '4', 'a' => '4',
+        'B' => '8', 'b' => '8',
+        'E' => '3', 'e' => '3',
+        'G' => '6', 'g' => '6',
+        'L' => '1', 'l' => '1',
+        'S' => '5', 's' => '5',
+        'T' => '7', 't' => '7'
+    );
+    
+    // Conversion de la chaîne en utilisant strtr()
+    return strtr($str, $conversions);
+}
+
+// Exemples de test
+echo "Test de la fonction leetSpeak :<br>";
+echo "Hello World -> " . leetSpeak("Hello World") . "<br>";
+echo "BEST GAME -> " . leetSpeak("BEST GAME") . "<br>";
+echo "LaPlaTeForme -> " . leetSpeak("LaPlaTeForme") . "<br>";
+
+?>
