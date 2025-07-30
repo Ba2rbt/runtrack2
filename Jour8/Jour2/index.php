@@ -1,0 +1,78 @@
+<?php
+// Vérifier si le bouton reset a été cliqué
+if (isset($_POST['reset'])) {
+    // Supprimer le cookie en définissant une date d'expiration dans le passé
+    setcookie("nbvisites", "", time() - 3600);
+    // Rediriger pour éviter la resoumission du formulaire
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+// Vérifier si le cookie existe
+if (isset($_COOKIE['nbvisites'])) {
+    // Le cookie existe, incrémenter sa valeur
+    $nbvisites = $_COOKIE['nbvisites'] + 1;
+} else {
+    // Le cookie n'existe pas, c'est la première visite
+    $nbvisites = 1;
+}
+
+// Mettre à jour le cookie (expire dans 30 jours)
+setcookie("nbvisites", $nbvisites, time() + (30 * 24 * 60 * 60));
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compteur de visites</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .counter {
+            background-color: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        .reset-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .reset-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Compteur de visites</h1>
+    
+    <div class="counter">
+        <h2>Nombre de visites : <?php echo $nbvisites; ?></h2>
+        <p>Contenu du cookie "nbvisites" : <?php echo isset($_COOKIE['nbvisites']) ? $_COOKIE['nbvisites'] : 'Cookie non défini'; ?></p>
+    </div>
+    
+    <form method="post">
+        <button type="submit" name="reset" class="reset-btn">Reset</button>
+    </form>
+    
+    <div style="margin-top: 30px; font-size: 14px; color: #666;">
+        <p>Rechargez la page pour voir le compteur s'incrémenter.</p>
+        <p>Cliquez sur "Reset" pour remettre le compteur à zéro.</p>
+    </div>
+</body>
+</html>

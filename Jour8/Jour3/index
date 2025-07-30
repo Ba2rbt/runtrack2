@@ -1,0 +1,26 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['prenoms'])) {
+    $_SESSION['prenoms'] = [];
+}
+
+if ($_POST['action'] === 'add' && !empty($_POST['prenom'])) {
+    $_SESSION['prenoms'][] = htmlspecialchars($_POST['prenom']);
+}
+
+if (isset($_POST['action']) && $_POST['action'] === 'reset') {
+    $_SESSION['prenoms'] = [];
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des prénoms</title>
+</head>
+<body>
+    <h1>Gestion des prénoms</h1>
+    

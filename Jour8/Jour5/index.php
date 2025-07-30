@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morpion</title>
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+    "
+  >
+    <div style="max-width: 400px; margin: 0 auto; text-align: center">
+      <h1 style="color: #0760baff; margin-bottom: 30px">Morpion</h1>
+
+      <?php
+    session_start();
+    
+    if (!isset($_SESSION['grille'])) {
+        $_SESSION['grille'] = array_fill(0, 9, '-');
+        $_SESSION['joueur_actuel'] = 'X';
+        $_SESSION['jeu_termine'] = false;
+        $_SESSION['gagnant'] = '';
+    }
+    
+    if (isset($_POST['case']) && !$_SESSION['jeu_termine']) {
+        $case = intval($_POST['case']);
+        
+        if ($_SESSION['grille'][$case] === '-') {
+            $_SESSION['grille'][$case] = $_SESSION['joueur_actuel'];
+            
+            if (verifierGagnant($_SESSION['grille'])) {
+                $_SESSION['jeu_termine'] = true;
+                $_SESSION['gagnant'] = $_SESSION['joueur_actuel'];
+                $_SESSION['temps_fin'] = time();
+            } elseif (!in_array('-', $_SESSION['grille'])) {
+                $_SESSION['jeu_termine'] = true;
+                $_SESSION['gagnant'] = 'Match nul';
+                $_SESSION['temps_fin'] = time();
+            } else {
+                $_SESSION['joueur_actuel'] = ($_SESSION['joueur_actuel'] === 'X') ? 'O' : 'X';
+            }
+        }
+    }
+    
+    if ($_SESSION['jeu_termine'] && isset($_SESSION['temps_fin'])) {
+        if (time() - $_SESSION['temps_fin'] >= 3) {
+            $_SESSION['grille'] = array_fill(0, 9, '-');
+            $_SESSION['joueur_actuel'] = 'X';
+            $_SESSION['jeu_termine'] = false;
+            $_SESSION['gagnant'] = '';
+            unset($_SESSION['temps_fin']);
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    }
+    
+    function verifierGagnant($grille) {
+        $lignes_gagnantes = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+        
+        foreach ($lignes_gagnantes as $ligne) {
+            if ($grille[$ligne[0]] !== '-' && 
+                $grille[$ligne[0]] === $grille[$ligne[1]] && 
+                $grille[$ligne[1]] === $grille[$ligne[2]]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    ?>
+
+      <div style="text-align: center; margin: 20px">
+        <?php if ($_SESSION['jeu_termine']): ?>
+        <?php if ($_SESSION['gagnant'] === 'Match nul'): ?>
+        <h2 style="color: orange">Match nul !</h2>
+        <?php else: ?>
+        <h2 style="color: green">
+          <?php echo $_SESSION['gagnant']; ?>
+          a gagné !
+        </h2>
+        <?php endif; ?>
+        <p style="color: #666">Redémarrage automatique...</p>
+        <?php 
+        if (isset($_SESSION['temps_fin'])) {
+            $temps_restant = 5 - (time() - $_SESSION['temps_fin']);
+            if ($temps_restant > 0) { 
+                echo '<meta http-equiv="refresh" content="1" />'; 
+            } 
+        } 
+        ?>
+        <?php else: ?>
+        <h2>
+          Au tour de :
+          <strong style="color: blue"
+            ><?php echo $_SESSION['joueur_actuel']; ?></strong
+          >
+        </h2>
+        <?php endif; ?>
+      </div>
+
+      <div style="text-align: center; margin: 20px auto; max-width: 250px">
+        <form method="post" action="">
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 80px);
+              gap: 5px;
+            "
+          >
+            <?php for ($i = 0; $i < 9; $i++): ?>
+            <?php if ($_SESSION['grille'][$i] === '-' && !$_SESSION['jeu_termine']): ?>
+            <button
+              type="submit"
+              name="case"
+              value="<?php echo $i; ?>"
+              style="
+                width: 80px;
+                height: 80px;
+                font-size: 20px;
+                border: 1px solid #333;
+                background: #fff;
+                cursor: pointer;
+              "
+            >
+              -
+            </button>
+            <?php else: ?>
+            <div
+              style="
+                width: 80px;
+                height: 80px;
+                border: 1px solid #333;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #000000ff;
+              "
+            >
+              <span
+                style="font-size: 30px; font-weight: bold; color: <?php echo ($_SESSION['grille'][$i] === 'X') ? '#e74c3c' : '#3498db'; ?>;"
+              >
+                <?php echo ($_SESSION['grille'][$i] === '-') ? '' : $_SESSION['grille'][$i]; ?>
+              </span>
+            </div>
+            <?php endif; ?>
+            <?php endfor; ?>
+          </div>
+        </form>
+      </div>
+
+      <div style="text-align: center; margin: 20px">
+        <form method="post" action="">
+          <button
+            type="submit"
+            name="reset"
+            style="
+              padding: 10px 20px;
+              font-size: 14px;
+              background: #db220dff;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Nouvelle partie
+          </button>
+        </form>
+      </div>
+
+      <?php
+    if (isset($_POST['reset'])) {
+        $_SESSION['grille'] = array_fill(0, 9, '-');
+        $_SESSION['joueur_actuel'] = 'X';
+        $_SESSION['jeu_termine'] = false;
+        $_SESSION['gagnant'] = '';
+        unset($_SESSION['temps_fin']);
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+    ?>
+    </div>
+  </body>
+</html>
